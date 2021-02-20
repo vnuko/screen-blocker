@@ -11,7 +11,9 @@ class Screen implements KeyListener {
     static JPasswordField field;
 
     // JFrame
-    static JFrame frame;
+    static JDialog frame;
+
+    static JLabel label;
 
     static JLabel background;
 
@@ -24,7 +26,7 @@ class Screen implements KeyListener {
 
     // main class
     public static void main(String[] args) throws IOException {
-        //System.setProperty("apple.awt.UIElement", "true");
+        System.setProperty("apple.awt.UIElement", "true");
 
         properties = Screen.getProperties();
 
@@ -43,7 +45,7 @@ class Screen implements KeyListener {
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 
         // Frame Component
-        frame = new JFrame();
+        frame = new JDialog();
 
         // Background Component
         background = new JLabel();
@@ -51,7 +53,7 @@ class Screen implements KeyListener {
                 new ImageIcon(
                         new ImageIcon(
                                 ImageIO.read(
-                                        new File("resources/images/glass.jpg")
+                                        new File("resources/images/stop.jpg")
                                 )
                         ).getImage().getScaledInstance((int) size.getWidth(), (int) size.getHeight(), Image.SCALE_SMOOTH)
                 )
@@ -61,7 +63,7 @@ class Screen implements KeyListener {
         // Field Component
         field = new JPasswordField(8);
         field.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        field.setBackground(new Color(255,255, 255, 100));
+        field.setBackground(new Color(255,255, 255, 180));
         field.setBounds((int) ((size.getWidth() / 2) - (200 / 2)), (int) ((size.getHeight() / 2) - (26 / 2)), 200, 36);
         field.setFont(
                 new Font("SansSerif", Font.BOLD, 20)
@@ -69,14 +71,21 @@ class Screen implements KeyListener {
         field.addKeyListener(scr);
 
         background.add(field);
+
+        label = new JLabel("");
+        label.setBounds(field.getX(), (field.getY() + field.getHeight() + 10), 200, 20);
+        label.setForeground(new Color(175, 0, 29));
+
+        background.add(label);
+
         frame.setContentPane(background);
         frame.setUndecorated(true);
         frame.setResizable(false);
         frame.setBackground(new Color(0,0,0));
 
         Timer timer = new Timer();
-        TimerTask tt = new TimerTask(){
-            public void run(){
+        TimerTask tt = new TimerTask() {
+            public void run() {
                 Calendar cal = Calendar.getInstance(); //this is the method you should use, not the Date(), because it is desperated.
 
                 switch (cal.get(Calendar.DAY_OF_WEEK)) {
@@ -126,14 +135,16 @@ class Screen implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
         String secret = properties.getProperty("secret");
+
+        label.setText("");
 
         if(e.getKeyCode() == KeyEvent.VK_ENTER){
             if (Arrays.equals(secret.toCharArray(), field.getPassword())) {
                 device.setFullScreenWindow(null);
             } else {
                 field.setText("");
+                label.setText("Wrong Secret Key");
             }
         }
     }
