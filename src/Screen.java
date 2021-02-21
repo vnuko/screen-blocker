@@ -14,6 +14,7 @@ class Screen implements KeyListener {
     static JDialog frame;
 
     static JLabel label;
+    static JLabel message;
 
     static JLabel background;
 
@@ -44,8 +45,13 @@ class Screen implements KeyListener {
 
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 
-        // Frame Component
+        // Main Window Component
         frame = new JDialog();
+        frame.setUndecorated(true);
+        frame.setResizable(false);
+        frame.setBackground(new Color(0,0,0));
+
+        //device.setFullScreenWindow(frame); //DEBUG
 
         // Background Component
         background = new JLabel();
@@ -60,6 +66,8 @@ class Screen implements KeyListener {
         );
         background.setLayout(null);
 
+        frame.setContentPane(background);
+
         // Field Component
         field = new JPasswordField(8);
         field.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -72,16 +80,27 @@ class Screen implements KeyListener {
 
         background.add(field);
 
+        // Field Label Component a.k.a Error Message
         label = new JLabel("");
         label.setBounds(field.getX(), (field.getY() + field.getHeight() + 10), 200, 20);
         label.setForeground(new Color(175, 0, 29));
 
         background.add(label);
 
-        frame.setContentPane(background);
-        frame.setUndecorated(true);
-        frame.setResizable(false);
-        frame.setBackground(new Color(0,0,0));
+        // Message Component
+        message = new JLabel(properties.getProperty("message", ""));
+        message.setFont(
+                new Font("SansSerif", Font.PLAIN, 100)
+        );
+        message.setForeground(new Color(0, 0, 0, 220));
+        message.setBounds(
+            (int) ((size.getWidth() / 2) - (message.getPreferredSize().getWidth() / 2)),
+            (int) ((size.getHeight() / 2) - message.getPreferredSize().getHeight() - 60),
+            (int) message.getPreferredSize().getWidth(),
+            (int) message.getPreferredSize().getHeight()
+        );
+
+        background.add(message);
 
         Timer timer = new Timer();
         TimerTask tt = new TimerTask() {
@@ -115,8 +134,6 @@ class Screen implements KeyListener {
             }
         };
         timer.schedule(tt, 1000, 1000*60);//	delay the task 1 second, and then run task every five seconds
-
-        device.setFullScreenWindow(frame); //DEBUG
     }
     
     public static Properties getProperties() throws IOException {
