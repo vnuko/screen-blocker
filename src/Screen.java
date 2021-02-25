@@ -144,7 +144,7 @@ public class Screen implements KeyListener {
 
         this.startTimer();
 
-        this.lock(); // DEBUG
+        // this.lock(); // DEBUG
     }
 
     protected void startTimer() {
