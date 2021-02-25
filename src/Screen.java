@@ -144,7 +144,7 @@ public class Screen implements KeyListener {
 
         this.startTimer();
 
-        //this.lock(); // DEBUG
+        this.lock(); // DEBUG
     }
 
     protected void startTimer() {
@@ -189,9 +189,13 @@ public class Screen implements KeyListener {
                     }
                 }
 
-//                if (lockTimestamp != 0 && lockTimestamp > (lockTimestamp - (2 * 60 * 1000))) {
-//                    Screen.this.unlock();
-//                }
+                if (
+                        Integer.parseInt(config.getProperty("clearAfter", "0")) > 0  &&
+                        lockTimestamp != 0 &&
+                        (System.currentTimeMillis() - ((long) Integer.parseInt(config.getProperty("clearAfter", "0")) * 60 * 1000)) > lockTimestamp
+                ) {
+                    Screen.this.unlock();
+                }
             }
         };
         timer.schedule(tt, 1000, 1000*60);//	delay the task 1 second, and then run task every 60 seconds
